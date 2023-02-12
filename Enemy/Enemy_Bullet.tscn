@@ -1,0 +1,41 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Assets/Enemy_Bullet.png" type="Texture" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Area2D
+
+var velocity = Vector2(0, -800)
+var damage = 1
+
+onready var Explosion = load(\"res://Effects/Explosion.tscn\")
+var Effects = null
+
+func _physics_process(delta):
+	position += velocity.rotated(rotation)*delta
+	position.x = clamp(position.x, 0, Global.VP.x)
+	position.y = clamp(position.y, 0, Global.VP.y)
+
+func _on_Enemy_Bullet_body_entered(body):
+	if not body.is_in_group(\"enemy\"):
+		if body.has_method(\"damage\"):
+			body.damage(damage)
+		Effects = get_node_or_null(\"/root/Game/Effects\")
+		if Effects != null:
+			var explosion = Explosion.instance()
+			explosion.global_position = global_position
+			Effects.add_child(explosion)
+		queue_free()
+"
+
+[node name="Enemy_Bullet" type="Area2D"]
+scale = Vector2( 0.8, 0.8 )
+script = SubResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PoolVector2Array( 4.5, 18.5, -4.5, 18.5, -4.5, -18.5, 4.5, -18.5 )
+
+[connection signal="body_entered" from="." to="." method="_on_Enemy_Bullet_body_entered"]

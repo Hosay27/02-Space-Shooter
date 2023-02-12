@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Player/Player.gd" type="Script" id=1]
+[ext_resource path="res://Assets/Player.png" type="Texture" id=2]
+[ext_resource path="res://Player/Gun.gd" type="Script" id=3]
+
+[node name="Player" type="KinematicBody2D"]
+scale = Vector2( 0.8, 0.8 )
+script = ExtResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 2 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PoolVector2Array( 8, -36.1, 18.2, -17.5, 19.4, -17.5, 56, -0.299999, 56, 12.7, 39.8, 37.5, 28.8, 37.5, 18.5, 34.9, 16.5, 37.5, -17, 37.5, -17, 36.8, -19.8, 35.3, -32.8, 37.5, -41, 37.5, -41, 36.1, -56, 14.9, -56, 0.5, -20, -16.8, -20, -17.6, -14, -21.6, -14, -23.9, -8, -36.9, -8, -37.5, 8, -37.5 )
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Area2D"]
+polygon = PoolVector2Array( 11, -41, -12, -41, -22, -25, -61, -4, -62, 17, -45, 43, 43, 44, 63, 14, 63, -4, 25, -21 )
+
+[node name="Primary" type="Area2D" parent="."]
+
+[node name="Gun" type="Area2D" parent="Primary"]
+script = ExtResource( 3 )
+
+[node name="Timer" type="Timer" parent="Primary/Gun"]
+wait_time = 0.2
+one_shot = true
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_Area2D_body_entered"]
+[connection signal="timeout" from="Primary/Gun/Timer" to="Primary/Gun" method="_on_Timer_timeout"]
